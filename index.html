@@ -1,1125 +1,1215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ArenaX — Web3 Alpha Community</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="ArenaX — The premier Web3 community for art lovers, gamers & degenerates. Alpha sharing, NFT plays, ecosystem intelligence."/>
+<meta property="og:title" content="ArenaX — Web3 · Art · Gaming"/>
+<meta property="og:description" content="Bear or bull, we keep winning. Join the arena."/>
+<title>ArenaX — Web3 · Art · Gaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <style>
 /* ═══════════════════════════════════════
-   RESET & VARIABLES
+   DESIGN TOKENS
 ═══════════════════════════════════════ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
 :root {
-  --black:   #080808;
-  --dark:    #0d0d0d;
-  --dark2:   #121212;
-  --card:    #111111;
-  --border:  rgba(200,175,100,0.15);
-  --gold:    #c8af6a;
-  --gold-lt: #f0d878;
-  --gold-dk: #8a6b2e;
-  --cream:   #f0ece0;
-  --muted:   rgba(240,236,224,0.45);
-  --font-display: 'Cormorant Garamond', serif;
-  --font-ui: 'Syne', sans-serif;
-}
+  --gold:        #C9A84C;
+  --gold-bright: #F0D080;
+  --gold-dim:    #7A6530;
+  --gold-glow:   rgba(201,168,76,0.18);
+  --gold-glow2:  rgba(201,168,76,0.06);
 
-html { scroll-behavior: smooth; }
+  --bg:    #060607;
+  --bg1:   #0A0A0C;
+  --bg2:   #0E0E11;
+  --bg3:   #131318;
 
-body {
-  background: var(--black);
-  color: var(--cream);
-  font-family: var(--font-ui);
-  overflow-x: hidden;
-  cursor: default;
-}
+  --line:  rgba(201,168,76,0.12);
+  --line2: rgba(201,168,76,0.28);
 
-/* ═══════════════════════════════════════
-   SCROLLBAR
-═══════════════════════════════════════ */
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--gold-dk); }
+  --text:     #EDE8DC;
+  --text-mid: #9B9386;
+  --text-dim: #5C574F;
 
-/* ═══════════════════════════════════════
-   CANVAS PARTICLES
-═══════════════════════════════════════ */
-#canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
+  --discord: #5865F2;
+  --tg:      #29A8E0;
+
+  --r: 4px;
 }
 
 /* ═══════════════════════════════════════
-   NAV
+   RESET & BASE
 ═══════════════════════════════════════ */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 20px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-weight:400;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+ul{list-style:none}
+
+/* ═══════════════════════════════════════
+   CANVAS + GLOBAL BG
+═══════════════════════════════════════ */
+#particle-canvas{
+  position:fixed;inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.55;
+}
+/* Vignette */
+body::after{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 100% 80% at 50% 0%,transparent 40%,rgba(6,6,7,.92) 100%);
 }
 
-nav.scrolled { border-bottom-color: var(--border); }
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
+/* ═══════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════ */
+@media(pointer:fine){
+  *{cursor:none!important}
+  #cur,#cur-ring{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%)}
+  #cur{width:7px;height:7px;background:var(--gold);transition:transform .08s}
+  #cur-ring{width:32px;height:32px;border:1px solid rgba(201,168,76,.45);transition:width .3s,height .3s,border-color .3s,transform .12s}
+  body:has(a:hover) #cur-ring,body:has(button:hover) #cur-ring{width:48px;height:48px;border-color:var(--gold)}
 }
 
-.nav-logo-icon { width: 32px; height: 32px; }
+/* ═══════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════ */
+.section-wrap{position:relative;z-index:2}
+.inner{max-width:1160px;margin:0 auto;padding:0 40px}
+@media(max-width:640px){.inner{padding:0 20px}}
 
-.nav-wordmark {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 4px;
-  color: var(--cream);
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:400;
+  letter-spacing:.45em;text-transform:uppercase;color:var(--gold-dim);
+}
+.eyebrow::before{content:'';width:28px;height:1px;background:var(--gold-dim)}
+
+.section-heading{
+  font-family:'Cinzel',serif;
+  font-size:clamp(30px,4.5vw,54px);
+  font-weight:700;
+  letter-spacing:.04em;
+  line-height:1.1;
+  color:var(--text);
+}
+.section-heading em{font-style:normal;color:var(--gold)}
+
+.section-sub{
+  margin-top:14px;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-mid);
+  max-width:520px;
+  line-height:1.75;
 }
 
-.nav-wordmark span {
-  color: transparent;
-  -webkit-text-stroke: 0.8px var(--gold);
+/* DIVIDER */
+.gold-rule{
+  width:60px;height:1px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+  margin:28px 0;
 }
 
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  list-style: none;
-}
-
-.nav-links a {
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-links a:hover { color: var(--gold); }
-
-.nav-cta {
-  display: flex;
-  gap: 10px;
-}
+/* SCROLL REVEAL */
+.sr{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease}
+.sr.in{opacity:1;transform:none}
+.sr.d1{transition-delay:.1s}.sr.d2{transition-delay:.2s}
+.sr.d3{transition-delay:.3s}.sr.d4{transition-delay:.4s}
+.sr.d5{transition-delay:.5s}.sr.d6{transition-delay:.6s}
 
 /* ═══════════════════════════════════════
    BUTTONS
 ═══════════════════════════════════════ */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.25s;
-  position: relative;
-  overflow: hidden;
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 26px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  position:relative;overflow:hidden;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  white-space:nowrap;
 }
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,.08);
+  transform:translateX(-110%) skewX(-18deg);
+  transition:transform .5s;
+}
+.btn:hover::after{transform:translateX(110%) skewX(-18deg)}
+.btn:hover{transform:translateY(-2px)}
+.btn svg{flex-shrink:0}
 
-.btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.05);
-  opacity: 0;
-  transition: opacity 0.2s;
+/* Gold primary */
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-bright) 100%);
+  color:#000;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
 }
-.btn:hover::before { opacity: 1; }
+.btn-gold:hover{box-shadow:0 0 28px rgba(201,168,76,.5),0 6px 24px rgba(0,0,0,.4)}
 
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold-lt), var(--gold), var(--gold-dk));
-  color: var(--black);
+/* Ghost variants */
+.btn-ghost{
+  background:transparent;color:var(--text);
+  border:1px solid var(--line2);
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
 }
-.btn-gold:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(200,175,100,0.3);
-}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-bright);box-shadow:0 0 18px var(--gold-glow)}
 
-.btn-outline {
-  background: transparent;
-  color: var(--cream);
-  border: 1px solid var(--border);
-}
-.btn-outline:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: translateY(-1px);
-}
+.btn-discord{border-color:rgba(88,101,242,.4);color:var(--text)}
+.btn-discord:hover{border-color:#5865F2;box-shadow:0 0 18px rgba(88,101,242,.3);color:#fff}
 
-.btn-ghost {
-  background: rgba(200,175,100,0.06);
-  color: var(--gold);
-  border: 1px solid rgba(200,175,100,0.2);
-}
-.btn-ghost:hover {
-  background: rgba(200,175,100,0.12);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(200,175,100,0.15);
-}
+.btn-tg{border-color:rgba(41,168,224,.35);color:var(--text)}
+.btn-tg:hover{border-color:#29A8E0;box-shadow:0 0 18px rgba(41,168,224,.3);color:#fff}
 
-.btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+/* ═══════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:0 40px;height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(6,6,7,.7);
+  backdrop-filter:blur(18px) saturate(120%);
+  border-bottom:1px solid var(--line);
+  transition:background .4s;
+}
+#nav.scrolled{background:rgba(6,6,7,.92)}
+
+.nav-logo{
+  font-family:'Cinzel',serif;font-size:20px;font-weight:700;
+  letter-spacing:.2em;color:var(--gold-bright);
+}
+.nav-logo .nx{color:var(--gold);text-shadow:0 0 18px rgba(201,168,76,.7)}
+
+.nav-links{display:flex;gap:28px}
+.nav-links a{
+  font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);transition:color .25s;
+}
+.nav-links a:hover{color:var(--gold-bright)}
+
+.nav-actions{display:flex;gap:10px;align-items:center}
+.nav-join{
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:#000;background:var(--gold);
+  padding:8px 20px;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:background .25s,box-shadow .25s;
+}
+.nav-join:hover{background:var(--gold-bright);box-shadow:0 0 20px rgba(201,168,76,.4)}
+
+.nav-hamburger{
+  display:none;flex-direction:column;gap:5px;
+  padding:6px;background:none;border:none;
+}
+.nav-hamburger span{width:22px;height:1.5px;background:var(--text-mid);transition:all .3s;display:block}
+
+/* Mobile nav drawer */
+.mobile-drawer{
+  display:none;
+  position:fixed;top:66px;left:0;right:0;z-index:190;
+  background:rgba(10,10,12,.97);
+  border-bottom:1px solid var(--line);
+  padding:24px 20px;
+  flex-direction:column;gap:20px;
+  backdrop-filter:blur(20px);
+}
+.mobile-drawer.open{display:flex}
+.mobile-drawer a{
+  font-size:14px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text-mid);padding:10px 0;
+  border-bottom:1px solid var(--line);
+  transition:color .2s;
+}
+.mobile-drawer a:hover{color:var(--gold)}
+
+@media(max-width:900px){
+  .nav-links,.nav-join{display:none}
+  .nav-hamburger{display:flex}
+}
+@media(max-width:640px){
+  #nav{padding:0 20px}
+}
 
 /* ═══════════════════════════════════════
    HERO
 ═══════════════════════════════════════ */
-#hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 24px 80px;
-  z-index: 1;
+#hero{
+  position:relative;z-index:2;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:100px 20px 80px;
+  overflow:hidden;
 }
 
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(200,175,100,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,175,100,0.03) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-/* Grid overlay */
-.hero-grid {
-  position: absolute;
-  inset: 0;
+/* Grid bg */
+.hero-grid{
+  position:absolute;inset:0;
   background-image:
-    linear-gradient(rgba(200,175,100,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,175,100,0.04) 1px, transparent 1px);
-  background-size: 80px 80px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
-  pointer-events: none;
+    linear-gradient(rgba(201,168,76,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,168,76,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,black 20%,transparent 100%);
+  animation:grid-drift 30s linear infinite;
+}
+@keyframes grid-drift{
+  0%{background-position:0 0}
+  100%{background-position:56px 56px}
 }
 
-.hero-eyebrow {
-  font-family: var(--font-ui);
-  font-size: 10px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 28px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.2s forwards;
+/* Radial glows */
+.hero-glow-a{
+  position:absolute;
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 65%);
+  top:50%;left:50%;transform:translate(-50%,-60%);
+  animation:breathe 5s ease-in-out infinite;
+  pointer-events:none;
+}
+.hero-glow-b{
+  position:absolute;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(88,101,242,.04) 0%,transparent 70%);
+  bottom:-100px;right:-100px;
+  animation:breathe 7s ease-in-out infinite reverse;
+  pointer-events:none;
+}
+@keyframes breathe{
+  0%,100%{opacity:.6;transform:translate(-50%,-60%) scale(1)}
+  50%{opacity:1;transform:translate(-50%,-60%) scale(1.12)}
 }
 
-.hero-logo-mark {
-  margin-bottom: 32px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.4s forwards;
+/* Scan line */
+.hero-scanline{
+  position:absolute;top:0;left:0;right:0;
+  height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;
+  animation:scan 6s ease-in-out infinite 2s;
+}
+@keyframes scan{
+  0%{top:0;opacity:0}
+  5%{opacity:.7}
+  95%{opacity:.4}
+  100%{top:100%;opacity:0}
 }
 
-.hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(64px, 12vw, 140px);
-  font-weight: 300;
-  letter-spacing: clamp(8px, 2vw, 24px);
-  line-height: 1;
-  margin-bottom: 8px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.5s forwards;
+/* corner brackets */
+.corner{position:absolute;width:28px;height:28px;opacity:.35}
+.corner-tl{top:60px;left:20px;border-top:1px solid var(--gold);border-left:1px solid var(--gold)}
+.corner-tr{top:60px;right:20px;border-top:1px solid var(--gold);border-right:1px solid var(--gold)}
+.corner-bl{bottom:40px;left:20px;border-bottom:1px solid var(--gold);border-left:1px solid var(--gold)}
+.corner-br{bottom:40px;right:20px;border-bottom:1px solid var(--gold);border-right:1px solid var(--gold)}
+
+/* Logo */
+.hero-logo-wrap{
+  position:relative;
+  margin-bottom:36px;
+  width:110px;height:110px;
+  opacity:0;animation:rise .9s .3s forwards;
+}
+.hero-logo-wrap img{
+  width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 0 36px rgba(201,168,76,.65));
+  animation:float 7s ease-in-out infinite;
+}
+.logo-ring{
+  position:absolute;inset:-18px;border-radius:50%;
+  border:1px solid rgba(201,168,76,.2);
+  animation:spin-ring 20s linear infinite;
+}
+.logo-ring2{
+  position:absolute;inset:-30px;border-radius:50%;
+  border:1px dashed rgba(201,168,76,.1);
+  animation:spin-ring 30s linear infinite reverse;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes spin-ring{to{transform:rotate(360deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* Title */
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;font-size:10px;
+  letter-spacing:.5em;color:var(--gold-dim);text-transform:uppercase;
+  margin-bottom:18px;
+  opacity:0;animation:rise .8s .15s forwards;
+}
+.hero-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(60px,11vw,130px);
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:.95;
+  opacity:0;animation:rise .9s .4s forwards;
+}
+.hero-title .a{color:var(--text)}
+.hero-title .x{
+  color:var(--gold);
+  text-shadow:0 0 50px rgba(201,168,76,.9),0 0 100px rgba(201,168,76,.4);
+  animation:xpulse 3.5s ease-in-out infinite .8s;
+}
+@keyframes xpulse{
+  0%,100%{text-shadow:0 0 40px rgba(201,168,76,.8),0 0 80px rgba(201,168,76,.3)}
+  50%{text-shadow:0 0 70px rgba(201,168,76,1),0 0 140px rgba(201,168,76,.55),0 0 220px rgba(201,168,76,.18)}
 }
 
-.hero-title .ax {
-  color: transparent;
-  -webkit-text-stroke: 1px var(--gold);
+.hero-rule{
+  width:180px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:18px auto;
+  opacity:0;animation:rise .8s .55s forwards;
+}
+.hero-tagline-row{
+  font-size:11px;font-weight:400;letter-spacing:.55em;
+  color:var(--gold-dim);text-transform:uppercase;
+  margin-bottom:10px;
+  opacity:0;animation:rise .8s .6s forwards;
+}
+.hero-sub{
+  font-size:clamp(15px,2vw,18px);font-weight:300;
+  color:var(--text-mid);max-width:480px;margin:0 auto 48px;
+  line-height:1.75;
+  opacity:0;animation:rise .8s .7s forwards;
+}
+.hero-sub strong{color:var(--text);font-weight:500}
+
+.hero-ctas{
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:rise .8s .85s forwards;
 }
 
-.hero-divider {
-  width: 80px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 24px auto;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.65s forwards;
+/* Stats bar */
+.hero-stats{
+  display:flex;gap:0;
+  margin-top:60px;
+  border:1px solid var(--line);
+  background:rgba(10,10,12,.5);
+  backdrop-filter:blur(10px);
+  opacity:0;animation:rise .8s 1.05s forwards;
+  max-width:600px;width:100%;
 }
+.hstat{
+  flex:1;padding:18px 24px;text-align:center;
+  border-right:1px solid var(--line);
+}
+.hstat:last-child{border-right:none}
+.hstat-val{
+  font-family:'Cinzel',serif;font-size:24px;font-weight:700;
+  color:var(--gold);letter-spacing:.05em;line-height:1;
+  margin-bottom:4px;
+}
+.hstat-lab{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
 
-.hero-sub {
-  font-family: var(--font-display);
-  font-size: clamp(16px, 2.5vw, 22px);
-  font-weight: 300;
-  font-style: italic;
-  color: var(--muted);
-  letter-spacing: 2px;
-  max-width: 500px;
-  margin-bottom: 48px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.75s forwards;
+/* Scroll nudge */
+.scroll-cue{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;animation:rise .8s 1.4s forwards;
 }
-
-.hero-btns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.9s forwards;
+.scroll-cue span{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase}
+.scroll-pill{
+  width:18px;height:28px;border-radius:9px;border:1px solid rgba(201,168,76,.3);
+  position:relative;overflow:hidden;
 }
-
-.hero-scroll {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  animation: fadeUp 0.8s 1.2s forwards;
+.scroll-pill::after{
+  content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);
+  width:3px;height:3px;border-radius:50%;background:var(--gold);
+  animation:pill-dot 2s ease-in-out infinite;
 }
-
-.hero-scroll span {
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: rgba(200,175,100,0.3);
-}
-
-.scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(1); }
-  50% { opacity: 0.8; transform: scaleY(1.1); }
-}
+@keyframes pill-dot{0%{top:5px;opacity:1}100%{top:18px;opacity:0}}
 
 /* ═══════════════════════════════════════
-   SECTION COMMONS
+   TICKER
 ═══════════════════════════════════════ */
-section {
-  position: relative;
-  z-index: 1;
-  padding: 100px 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+.ticker-strip{
+  position:relative;z-index:3;
+  overflow:hidden;
+  background:rgba(201,168,76,.05);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:11px 0;
 }
-
-.section-label {
-  font-size: 9px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
+.ticker-track{
+  display:flex;white-space:nowrap;width:max-content;
+  animation:ticker-move 28s linear infinite;
 }
-
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(36px, 5vw, 60px);
-  font-weight: 300;
-  letter-spacing: 4px;
-  margin-bottom: 16px;
+.ticker-track:hover{animation-play-state:paused}
+.ticker-item{
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:.25em;color:var(--gold-dim);text-transform:uppercase;
+  padding:0 36px;
 }
-
-.section-title em { font-style: italic; color: var(--muted); }
-
-.section-desc {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.8;
-  max-width: 560px;
-  letter-spacing: 0.5px;
-}
-
-.section-line {
-  width: 100%;
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 60px;
-}
+.ticker-item .sep{color:var(--gold);margin:0 8px}
+@keyframes ticker-move{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ═══════════════════════════════════════
    ABOUT
 ═══════════════════════════════════════ */
-#about {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
+#about{padding:110px 0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg1) 100%)}
+
+.about-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:48px}}
+
+.about-text{}
+.about-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.tag{
+  font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--gold-dim);padding:7px 16px;
+  border:1px solid var(--line);background:var(--bg2);
+  clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);
+  transition:all .3s;
+}
+.tag:hover{color:var(--gold-bright);border-color:var(--gold);box-shadow:0 0 12px var(--gold-glow)}
+
+.about-stats-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2px;margin-top:36px;
+}
+.astat{
+  background:var(--bg2);border:1px solid var(--line);
+  padding:22px 20px;position:relative;overflow:hidden;
+  transition:border-color .3s;
+}
+.astat::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);transition:transform .4s;
+}
+.astat:hover{border-color:var(--line2)}
+.astat:hover::before{transform:scaleX(1)}
+.astat-val{font-family:'Cinzel',serif;font-size:32px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:4px}
+.astat-lab{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim)}
+
+/* Orbital visual */
+.about-visual{
+  display:flex;align-items:center;justify-content:center;
+}
+.orbital{position:relative;width:320px;height:320px}
+.orb-ring{
+  position:absolute;border-radius:50%;border:1px solid;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.orb-ring-1{width:100%;height:100%;border-color:rgba(201,168,76,.1);animation:orb-spin 25s linear infinite}
+.orb-ring-2{width:73%;height:73%;border-color:rgba(201,168,76,.18);border-style:dashed;animation:orb-spin 18s linear infinite reverse}
+.orb-ring-3{width:48%;height:48%;border-color:rgba(201,168,76,.32);animation:orb-spin 12s linear infinite}
+@keyframes orb-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.orb-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:130px;height:130px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,.13) 0%,transparent 70%);
+  display:flex;align-items:center;justify-content:center;z-index:1;
+}
+.orb-center img{width:88px;filter:drop-shadow(0 0 24px rgba(201,168,76,.8))}
+
+/* Orbit dot */
+.orb-dot{
+  position:absolute;width:7px;height:7px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 10px var(--gold);
+  top:50%;left:50%;
 }
 
-.about-left {}
-
-.about-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-}
-
-.stat-box {
-  background: var(--dark);
-  padding: 32px 24px;
-  text-align: center;
-}
-
-.stat-num {
-  font-family: var(--font-display);
-  font-size: 48px;
-  font-weight: 300;
-  color: var(--gold);
-  letter-spacing: 2px;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.stat-label {
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+@media(max-width:900px){.about-visual{display:none}}
 
 /* ═══════════════════════════════════════
-   TWEETS
+   X / TWITTER FEED
 ═══════════════════════════════════════ */
-#tweets { max-width: 1200px; }
-
-.tweets-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-  gap: 20px;
+#feed{padding:110px 0;background:var(--bg)}
+.feed-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:56px;flex-wrap:wrap;gap:20px;
 }
 
-.tweets-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
+.tweets-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:2px;
 }
 
-.tweet-card {
-  background: var(--dark);
-  padding: 28px;
-  transition: background 0.2s;
-  position: relative;
-  overflow: hidden;
+.tweet-card{
+  background:var(--bg2);border:1px solid var(--line);
+  padding:28px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+}
+.tweet-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(201,168,76,.04) 0%,transparent 55%);
+  opacity:0;transition:opacity .3s;
+}
+.tweet-card:hover{
+  border-color:var(--line2);
+  transform:translateY(-5px);
+  box-shadow:0 22px 44px rgba(0,0,0,.45),0 0 28px rgba(201,168,76,.07);
+}
+.tweet-card:hover::before{opacity:1}
+
+.tc-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.tc-av{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#000;
+  box-shadow:0 0 14px rgba(201,168,76,.35);
+}
+.tc-names{flex:1}
+.tc-name{font-size:15px;font-weight:600;letter-spacing:.03em;color:var(--text)}
+.tc-handle{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim)}
+.tc-xlogo{
+  font-family:'Cinzel',serif;font-size:16px;font-weight:700;
+  color:var(--text-dim);
 }
 
-.tweet-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
+.tc-body{
+  font-size:15px;font-weight:300;line-height:1.65;
+  color:var(--text);margin-bottom:20px;
 }
+.tc-body .ht{color:var(--gold)}
+.tc-body .mn{color:var(--tg)}
+.tc-body .em{font-size:16px}
 
-.tweet-card:hover { background: #161616; }
-.tweet-card:hover::before { opacity: 1; }
-
-.tweet-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
+.tc-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:14px;border-top:1px solid var(--line);
 }
-
-.tweet-avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--black);
-  flex-shrink: 0;
+.tc-metrics{display:flex;gap:18px}
+.tc-m{
+  display:flex;align-items:center;gap:5px;
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim);
 }
+.tc-date{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);opacity:.55}
 
-.tweet-meta {}
-.tweet-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cream);
-  letter-spacing: 0.5px;
+.feed-cta-row{
+  margin-top:2px;
+  padding:18px 24px;
+  background:var(--bg3);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;
 }
-.tweet-handle {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.5px;
-}
+.feed-cta-row p{font-family:'Space Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:.1em}
+.feed-cta-row a{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);transition:color .3s}
+.feed-cta-row a:hover{color:var(--gold)}
 
-.tweet-x-icon {
-  margin-left: auto;
-  color: var(--muted);
-  width: 16px; height: 16px;
-  opacity: 0.5;
+/* X embed fallback */
+.x-embed-section{margin-top:28px}
+.x-embed-section h4{
+  font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;
 }
-
-.tweet-text {
-  font-size: 13px;
-  line-height: 1.75;
-  color: rgba(240,236,224,0.8);
-  margin-bottom: 20px;
-  letter-spacing: 0.3px;
+.x-embed-wrapper{
+  border:1px solid var(--line);
+  background:var(--bg2);
+  overflow:hidden;
+  padding:20px;
+  display:flex;align-items:center;justify-content:center;
+  min-height:80px;
 }
-
-.tweet-text a {
-  color: var(--gold);
-  text-decoration: none;
+.x-embed-link{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:500;letter-spacing:.08em;
+  color:var(--gold-dim);
+  border:1px solid var(--line2);padding:12px 22px;
+  transition:all .3s;
 }
-
-.tweet-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.tweet-date {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: rgba(200,175,100,0.35);
-  text-transform: uppercase;
-}
-
-.tweet-stats {
-  display: flex;
-  gap: 14px;
-}
-
-.tweet-stat {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.tweet-stat svg { width: 12px; height: 12px; }
+.x-embed-link:hover{color:var(--gold-bright);border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow)}
 
 /* ═══════════════════════════════════════
-   COLLABS
+   COLLABORATIONS
 ═══════════════════════════════════════ */
-#collabs { max-width: 1200px; }
+#collabs{padding:110px 0;background:var(--bg1)}
+.collabs-header{margin-bottom:56px}
 
-.collabs-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
+.collabs-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(175px,1fr));
+  gap:2px;
 }
 
-.collab-card {
-  background: var(--dark);
-  padding: 36px 20px;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.2s, transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  position: relative;
-  overflow: hidden;
+.collab-card{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:36px 20px 28px;
+  background:var(--bg2);border:1px solid var(--line);
+  text-decoration:none;position:relative;overflow:hidden;
+  transition:transform .35s,border-color .35s,box-shadow .35s,background .35s;
 }
-
-.collab-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  transform: scaleX(0);
-  transition: transform 0.3s;
+.collab-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);transition:transform .4s;
 }
-
-.collab-card:hover { background: #161616; }
-.collab-card:hover::after { transform: scaleX(1); }
-
-.collab-logo {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(200,175,100,0.15), rgba(200,175,100,0.05));
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--gold);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  flex-shrink: 0;
+.collab-card:hover{
+  transform:translateY(-7px);border-color:var(--line2);background:var(--bg3);
+  box-shadow:0 24px 48px rgba(0,0,0,.5),0 0 32px rgba(201,168,76,.09);
 }
+.collab-card:hover::after{transform:scaleX(1)}
 
-.collab-card:hover .collab-logo {
-  border-color: var(--gold);
-  box-shadow: 0 0 20px rgba(200,175,100,0.2);
+.cc-icon{
+  width:68px;height:68px;border-radius:50%;
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--gold);
+  background:var(--bg3);margin-bottom:16px;overflow:hidden;
+  position:relative;
+  transition:border-color .3s,box-shadow .3s;
 }
+.collab-card:hover .cc-icon{border-color:var(--gold);box-shadow:0 0 18px rgba(201,168,76,.35)}
+.cc-icon img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.cc-loading{font-size:18px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.collab-name {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--cream);
+.cc-name{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  letter-spacing:.1em;color:var(--text);margin-bottom:5px;
+  transition:color .3s;
 }
-
-.collab-tag {
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  color: var(--gold);
-  text-transform: uppercase;
-  opacity: 0.7;
+.collab-card:hover .cc-name{color:var(--gold-bright)}
+.cc-tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim)}
+.cc-xlink{
+  margin-top:14px;font-size:10px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold-dim);
+  display:flex;align-items:center;gap:5px;justify-content:center;
+  transition:color .3s;
 }
+.collab-card:hover .cc-xlink{color:var(--gold)}
 
 /* ═══════════════════════════════════════
-   COMMUNITY LINKS / CTA
+   JOIN / COMMUNITY
 ═══════════════════════════════════════ */
-#community {
-  text-align: center;
-  padding: 100px 40px;
-  max-width: 1200px;
-  position: relative;
+#join{padding:110px 0;background:var(--bg);position:relative;overflow:hidden}
+
+.join-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,76,.05) 0%,transparent 70%);
+}
+.join-grid-bg{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black,transparent);
 }
 
-.community-inner {
-  border: 1px solid var(--border);
-  padding: 80px 40px;
-  position: relative;
-  background: linear-gradient(135deg, rgba(200,175,100,0.03), transparent);
+.join-inner{
+  position:relative;z-index:2;
+  max-width:800px;margin:0 auto;text-align:center;
 }
+.join-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;margin-top:56px;
+}
+@media(max-width:640px){.join-cards{grid-template-columns:1fr;gap:2px}}
 
-.community-inner::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 50%; transform: translateX(-50%);
-  width: 120px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+.join-card{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding:40px 20px 32px;
+  background:var(--bg2);border:1px solid var(--line);
+  text-decoration:none;position:relative;overflow:hidden;
+  transition:transform .35s,border-color .35s,box-shadow .35s;
 }
+.join-card::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity .4s;
+}
+.join-card.jd::before{background:radial-gradient(ellipse at 50% 110%,rgba(88,101,242,.1),transparent 70%)}
+.join-card.jt::before{background:radial-gradient(ellipse at 50% 110%,rgba(41,168,224,.09),transparent 70%)}
+.join-card.jx::before{background:radial-gradient(ellipse at 50% 110%,rgba(201,168,76,.08),transparent 70%)}
+.join-card:hover{transform:translateY(-8px)}
+.join-card:hover::before{opacity:1}
+.join-card.jd:hover{border-color:rgba(88,101,242,.45);box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 28px rgba(88,101,242,.14)}
+.join-card.jt:hover{border-color:rgba(41,168,224,.4);box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 28px rgba(41,168,224,.12)}
+.join-card.jx:hover{border-color:var(--line2);box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 28px rgba(201,168,76,.12)}
 
-.community-glow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(200,175,100,0.05) 0%, transparent 70%);
-  pointer-events: none;
+.jcard-icon{
+  width:60px;height:60px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
 }
+.jd .jcard-icon{background:rgba(88,101,242,.12);border:1px solid rgba(88,101,242,.25)}
+.jt .jcard-icon{background:rgba(41,168,224,.1);border:1px solid rgba(41,168,224,.22)}
+.jx .jcard-icon{background:rgba(201,168,76,.08);border:1px solid var(--line)}
+.jcard-icon svg{width:26px;height:26px}
 
-.community-title {
-  font-family: var(--font-display);
-  font-size: clamp(32px, 5vw, 56px);
-  font-weight: 300;
-  letter-spacing: 4px;
-  margin-bottom: 16px;
-}
-
-.community-sub {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 16px;
-  color: var(--muted);
-  margin-bottom: 44px;
-  letter-spacing: 1px;
-}
-
-.community-btns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: center;
-}
+.jcard-name{font-family:'Cinzel',serif;font-size:15px;font-weight:600;letter-spacing:.1em;color:var(--text)}
+.jcard-desc{font-size:13px;font-weight:300;color:var(--text-mid);line-height:1.6;text-align:center}
+.jcard-cta{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
+.jd .jcard-cta{color:#5865F2}
+.jt .jcard-cta{color:#29A8E0}
+.jx .jcard-cta{color:var(--gold)}
 
 /* ═══════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════ */
-footer {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--border);
-  padding: 48px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 24px;
-  max-width: 100%;
+footer{
+  position:relative;z-index:2;
+  background:var(--bg1);
+  border-top:1px solid var(--line);
+  padding:64px 40px 40px;
 }
+@media(max-width:640px){footer{padding:48px 20px 32px}}
 
-.footer-logo {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 4px;
-  color: var(--cream);
+.footer-top{
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:48px;
+  padding-bottom:48px;border-bottom:1px solid var(--line);
 }
+@media(max-width:900px){.footer-top{grid-template-columns:1fr 1fr;gap:36px}}
+@media(max-width:560px){.footer-top{grid-template-columns:1fr}}
 
-.footer-logo span { color: transparent; -webkit-text-stroke: 0.8px var(--gold); }
-
-.footer-copy {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: rgba(200,175,100,0.25);
-  text-transform: uppercase;
+.ft-brand .ft-logo{
+  font-family:'Cinzel',serif;font-size:26px;font-weight:700;
+  letter-spacing:.18em;color:var(--gold-bright);margin-bottom:12px;
 }
+.ft-brand .ft-logo span{color:var(--gold);text-shadow:0 0 14px rgba(201,168,76,.6)}
+.ft-brand p{font-size:14px;font-weight:300;color:var(--text-mid);line-height:1.7;max-width:270px;margin-bottom:24px}
 
-.footer-links {
-  display: flex;
-  gap: 20px;
+.ft-socials{display:flex;gap:10px}
+.ft-soc{
+  width:40px;height:40px;
+  border:1px solid var(--line);background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;transition:all .3s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
 }
+.ft-soc:hover{border-color:var(--gold);background:rgba(201,168,76,.08);box-shadow:0 0 14px var(--gold-glow)}
+.ft-soc svg{width:17px;height:17px;color:var(--text-dim);transition:color .3s}
+.ft-soc:hover svg{color:var(--gold)}
 
-.footer-links a {
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  letter-spacing: 1.5px;
+.ft-col h4{
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--gold-dim);margin-bottom:18px;
 }
+.ft-col ul{display:flex;flex-direction:column;gap:10px}
+.ft-col a{
+  font-size:14px;font-weight:300;color:var(--text-mid);
+  transition:color .25s;display:flex;align-items:center;gap:7px;
+}
+.ft-col a:hover{color:var(--gold-bright)}
 
-.footer-links a:hover { color: var(--gold); }
-.footer-links svg { width: 14px; height: 14px; }
+.footer-bottom{
+  max-width:1160px;margin:28px auto 0;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.footer-bottom p{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.1em;opacity:.5}
+.footer-bottom .ftag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.35em;color:var(--gold-dim);text-transform:uppercase;opacity:.5}
 
 /* ═══════════════════════════════════════
-   REVEAL ANIMATIONS
+   BACK TO TOP
 ═══════════════════════════════════════ */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+#btt{
+  position:fixed;bottom:28px;right:28px;z-index:150;
+  width:42px;height:42px;
+  background:var(--bg2);border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:all .3s;opacity:0;pointer-events:none;
 }
-
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-.reveal-delay-4 { transition-delay: 0.4s; }
+#btt.show{opacity:1;pointer-events:all}
+#btt:hover{background:rgba(201,168,76,.1);border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow)}
+#btt svg{width:16px;height:16px;color:var(--gold)}
 
 /* ═══════════════════════════════════════
-   MOBILE NAV TOGGLE
+   SECTION BORDERS / SEPARATORS
 ═══════════════════════════════════════ */
-.nav-hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 4px;
-}
-
-.nav-hamburger span {
-  width: 22px; height: 1px;
-  background: var(--cream);
-  transition: 0.3s;
+.section-sep{
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line2),transparent);
 }
 
 /* ═══════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE EXTRAS
 ═══════════════════════════════════════ */
-@media (max-width: 900px) {
-  nav { padding: 18px 24px; }
-
-  .nav-links { display: none; }
-  .nav-cta { display: none; }
-  .nav-hamburger { display: flex; }
-
-  #about {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    padding: 60px 24px;
-  }
-
-  .about-right { grid-template-columns: 1fr 1fr; }
-
-  .tweets-grid { grid-template-columns: 1fr; }
-
-  .collabs-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .collabs-grid .collab-card:last-child {
-    grid-column: 1 / -1;
-  }
-
-  section { padding: 60px 24px; }
-
-  .tweets-header { flex-direction: column; align-items: flex-start; }
-
-  .community-inner { padding: 48px 24px; }
-
-  footer {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 40px 24px;
-  }
+@media(max-width:640px){
+  .hero-stats{flex-wrap:wrap}
+  .hstat{min-width:48%}
+  .tweets-grid{grid-template-columns:1fr}
+  .collabs-grid{grid-template-columns:repeat(2,1fr)}
+  #feed,.#collabs,#about,#join{padding:70px 0}
 }
-
-@media (max-width: 480px) {
-  .about-right { grid-template-columns: 1fr 1fr; }
-  .collabs-grid { grid-template-columns: 1fr 1fr; }
-  .collabs-grid .collab-card:last-child { grid-column: auto; }
-  .hero-btns { flex-direction: column; align-items: center; }
-  .community-btns { flex-direction: column; align-items: center; }
+@media(max-width:400px){
+  .collabs-grid{grid-template-columns:1fr 1fr}
+  .hero-ctas .btn{font-size:11px;padding:11px 16px}
 }
 </style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
 
-<!-- ═══ NAV ═══ -->
+<!-- PARTICLE CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- BACK TO TOP -->
+<button id="btt" aria-label="Back to top" onclick="scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ═══ NAVBAR ═══ -->
 <nav id="nav">
-  <a href="#" class="nav-logo">
-    <svg class="nav-logo-icon" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ng" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#f5e090"/><stop offset="100%" stop-color="#8a6b2e"/>
-        </linearGradient>
-        <linearGradient id="nc" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#c8bfa8"/>
-        </linearGradient>
-      </defs>
-      <rect x="110" y="70" width="100" height="180" fill="none" stroke="url(#ng)" stroke-width="1.5"/>
-      <line x1="125" y1="90" x2="93" y2="220" stroke="url(#nc)" stroke-width="14" stroke-linecap="butt"/>
-      <line x1="125" y1="90" x2="157" y2="220" stroke="url(#nc)" stroke-width="14" stroke-linecap="butt"/>
-      <line x1="100" y1="172" x2="150" y2="172" stroke="url(#ng)" stroke-width="8" stroke-linecap="butt"/>
-      <path d="M 172 108 C 186 120,192 135,192 160 C 192 185,186 200,172 212 L 176 212 C 194 200,202 184,202 160 C 202 136,194 120,176 108 Z" fill="url(#ng)"/>
-      <path d="M 228 108 C 214 120,208 135,208 160 C 208 185,214 200,228 212 L 224 212 C 206 200,198 184,198 160 C 198 136,206 120,224 108 Z" fill="url(#ng)"/>
-    </svg>
-    <span class="nav-wordmark">ARENA<span>X</span></span>
-  </a>
-
+  <a href="#hero" class="nav-logo">ARENA<span class="nx">X</span></a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#tweets">Posts</a></li>
+    <li><a href="#feed">Feed</a></li>
     <li><a href="#collabs">Collabs</a></li>
-    <li><a href="#community">Join</a></li>
+    <li><a href="#join">Community</a></li>
   </ul>
-
-  <div class="nav-cta">
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="btn btn-outline" style="padding:8px 16px">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      Follow
-    </a>
-    <a href="https://discord.gg/ntHQRjHz" target="_blank" class="btn btn-gold">
-      Join Discord
-    </a>
+  <div class="nav-actions">
+    <a href="https://discord.gg/ntHQRjHz" target="_blank" rel="noopener" class="nav-join">Join Discord</a>
   </div>
-
-  <div class="nav-hamburger" onclick="toggleMobileNav()">
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
 
-<!-- Mobile nav overlay -->
-<div id="mobile-nav" style="display:none;position:fixed;inset:0;background:rgba(8,8,8,0.97);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px;">
-  <a href="#about" onclick="toggleMobileNav()" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:4px;color:#f0ece0;text-decoration:none;">About</a>
-  <a href="#tweets" onclick="toggleMobileNav()" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:4px;color:#f0ece0;text-decoration:none;">Posts</a>
-  <a href="#collabs" onclick="toggleMobileNav()" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:4px;color:#f0ece0;text-decoration:none;">Collabs</a>
-  <a href="#community" onclick="toggleMobileNav()" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:4px;color:#f0ece0;text-decoration:none;">Join</a>
-  <div style="display:flex;gap:12px;margin-top:20px;">
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="btn btn-outline">X / Twitter</a>
-    <a href="https://discord.gg/ntHQRjHz" target="_blank" class="btn btn-gold">Discord</a>
-  </div>
+<!-- Mobile drawer -->
+<div class="mobile-drawer" id="drawer">
+  <a href="#about" onclick="closeDrawer()">About</a>
+  <a href="#feed" onclick="closeDrawer()">X Feed</a>
+  <a href="#collabs" onclick="closeDrawer()">Collaborations</a>
+  <a href="#join" onclick="closeDrawer()">Community</a>
+  <a href="https://discord.gg/ntHQRjHz" target="_blank" rel="noopener" style="color:var(--gold)">→ Join Discord</a>
 </div>
 
 <!-- ═══ HERO ═══ -->
-<section id="hero">
-  <div class="hero-bg"></div>
+<section id="hero" class="section-wrap">
   <div class="hero-grid"></div>
+  <div class="hero-glow-a"></div>
+  <div class="hero-glow-b"></div>
+  <div class="hero-scanline"></div>
 
-  <p class="hero-eyebrow">// Web3 Alpha Community</p>
+  <!-- Corner brackets -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
 
-  <div class="hero-logo-mark">
-    <svg width="100" height="100" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#f5e090"/><stop offset="55%" stop-color="#c8af6a"/><stop offset="100%" stop-color="#8a6b2e"/>
-        </linearGradient>
-        <linearGradient id="hgv" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#f5e090"/><stop offset="100%" stop-color="#8a6b2e"/>
-        </linearGradient>
-        <linearGradient id="hc" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#c8bfa8"/>
-        </linearGradient>
-        <filter id="hglow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <rect x="109" y="69" width="102" height="182" fill="none" stroke="rgba(200,175,100,0.08)" stroke-width="8"/>
-      <rect x="110" y="70" width="100" height="180" fill="none" stroke="url(#hgv)" stroke-width="1.5"/>
-      <line x1="110" y1="70" x2="210" y2="70" stroke="#f5e090" stroke-width="1.5" opacity="0.9" filter="url(#hglow)"/>
-      <g stroke="url(#hg)" stroke-width="1.5" fill="none" opacity="0.9">
-        <polyline points="104,82 104,70 116,70"/>
-        <polyline points="204,82 204,70 216,70"/>
-        <polyline points="104,238 104,250 116,250"/>
-        <polyline points="204,238 204,250 216,250"/>
-      </g>
-      <line x1="125" y1="90" x2="93" y2="220" stroke="url(#hc)" stroke-width="14" stroke-linecap="butt"/>
-      <line x1="125" y1="90" x2="157" y2="220" stroke="url(#hc)" stroke-width="14" stroke-linecap="butt"/>
-      <line x1="100" y1="172" x2="150" y2="172" stroke="url(#hg)" stroke-width="8" stroke-linecap="butt" filter="url(#hglow)"/>
-      <path d="M 172 108 C 186 120,192 135,192 160 C 192 185,186 200,172 212 L 176 212 C 194 200,202 184,202 160 C 202 136,194 120,176 108 Z" fill="url(#hg)" filter="url(#hglow)"/>
-      <path d="M 228 108 C 214 120,208 135,208 160 C 208 185,214 200,228 212 L 224 212 C 206 200,198 184,198 160 C 198 136,206 120,224 108 Z" fill="url(#hg)" filter="url(#hglow)"/>
-    </svg>
+  <p class="hero-eyebrow">// Alpha Community Established 2024 //</p>
+
+  <div class="hero-logo-wrap">
+    <div class="logo-ring2"></div>
+    <div class="logo-ring"></div>
+    <img src="logo.jpg" alt="ArenaX Logo" loading="eager"/>
   </div>
 
-  <h1 class="hero-title">ARENA<span class="ax">X</span></h1>
+  <h1 class="hero-title"><span class="a">ARENA</span><span class="x">X</span></h1>
 
-  <div class="hero-divider"></div>
+  <div class="hero-rule"></div>
+  <p class="hero-tagline-row">Web3 &nbsp;·&nbsp; Art &nbsp;·&nbsp; Gaming</p>
 
-  <p class="hero-sub">Art lovers, Gamers & Degenerates<br>delving into the realm of Web3</p>
+  <p class="hero-sub">
+    Art lovers, gamers &amp; <strong>degenerates</strong> delving into the realm of Web3.<br>
+    Bear or bull — the arena keeps winning.
+  </p>
 
-  <div class="hero-btns">
-    <a href="https://discord.gg/ntHQRjHz" target="_blank" class="btn btn-gold">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-      Join Discord
+  <div class="hero-ctas">
+    <a href="https://discord.gg/ntHQRjHz" target="_blank" rel="noopener" class="btn btn-ghost btn-discord">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.077.077 0 0 0 .031.052 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Discord
     </a>
-    <a href="https://t.me/+5beXHqVcPNBmNTA0" target="_blank" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+    <a href="https://t.me/+5beXHqVcPNBmNTA0" target="_blank" rel="noopener" class="btn btn-ghost btn-tg">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
       Telegram
     </a>
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="btn btn-outline">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    <a href="https://x.com/ArenaXAlpha" target="_blank" rel="noopener" class="btn btn-gold">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.262 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       @ArenaXAlpha
     </a>
   </div>
 
-  <div class="hero-scroll">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-val">4.1K+</div>
+      <div class="hstat-lab">Followers</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val">100X</div>
+      <div class="hstat-lab">Best Call</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val">2024</div>
+      <div class="hstat-lab">Founded</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val">∞</div>
+      <div class="hstat-lab">Alpha Left</div>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Explore</span>
+    <div class="scroll-pill"></div>
   </div>
 </section>
+
+<!-- TICKER -->
+<div class="ticker-strip section-wrap">
+  <div class="ticker-track" id="ticker">
+    <span class="ticker-item">Web3 Alpha<span class="sep">◆</span></span>
+    <span class="ticker-item">NFT Plays<span class="sep">◆</span></span>
+    <span class="ticker-item">Gaming Guild<span class="sep">◆</span></span>
+    <span class="ticker-item">Art Drops<span class="sep">◆</span></span>
+    <span class="ticker-item">Bear or Bull<span class="sep">◆</span></span>
+    <span class="ticker-item">On-Chain Culture<span class="sep">◆</span></span>
+    <span class="ticker-item">Token Calls<span class="sep">◆</span></span>
+    <span class="ticker-item">Community First<span class="sep">◆</span></span>
+    <span class="ticker-item">Ecosystem Intel<span class="sep">◆</span></span>
+    <!-- dupe for seamless loop -->
+    <span class="ticker-item">Web3 Alpha<span class="sep">◆</span></span>
+    <span class="ticker-item">NFT Plays<span class="sep">◆</span></span>
+    <span class="ticker-item">Gaming Guild<span class="sep">◆</span></span>
+    <span class="ticker-item">Art Drops<span class="sep">◆</span></span>
+    <span class="ticker-item">Bear or Bull<span class="sep">◆</span></span>
+    <span class="ticker-item">On-Chain Culture<span class="sep">◆</span></span>
+    <span class="ticker-item">Token Calls<span class="sep">◆</span></span>
+    <span class="ticker-item">Community First<span class="sep">◆</span></span>
+    <span class="ticker-item">Ecosystem Intel<span class="sep">◆</span></span>
+  </div>
+</div>
 
 <!-- ═══ ABOUT ═══ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 40px;">
-  <div class="section-line reveal"></div>
-</div>
-<section id="about">
-  <div class="about-left reveal">
-    <p class="section-label">// 001 — About</p>
-    <h2 class="section-title">Where <em>degenerates</em><br>become alphas</h2>
-    <div style="width:50px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:24px 0;"></div>
-    <p class="section-desc">ArenaX is a community of art lovers, gamers, and Web3 natives who stay ahead of the curve. Bear or bull — we keep winning by exploring every corner of the ecosystem. From NFT plays to token calls, we're always in the arena.</p>
-    <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:10px;">
-      <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);color:var(--gold);">NFT Alpha</span>
-      <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);color:var(--gold);">Token Calls</span>
-      <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);color:var(--gold);">Web3 Gaming</span>
-      <span style="font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);color:var(--gold);">On-Chain</span>
-    </div>
-  </div>
-  <div class="about-right reveal reveal-delay-2">
-    <div class="stat-box">
-      <span class="stat-num">4.1K+</span>
-      <span class="stat-label">Followers</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-num">100X</span>
-      <span class="stat-label">Best Call</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-num">2024</span>
-      <span class="stat-label">Founded</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-num">∞</span>
-      <span class="stat-label">Alpha Left</span>
+<section id="about" class="section-wrap">
+  <div class="section-sep"></div>
+  <div class="inner" style="padding-top:110px;padding-bottom:110px">
+    <div class="about-grid">
+      <div>
+        <p class="eyebrow sr">About ArenaX</p>
+        <div class="gold-rule sr d1"></div>
+        <h2 class="section-heading sr d2">Where <em>degenerates</em><br>become alphas</h2>
+        <p class="section-sub sr d3">
+          ArenaX is a community of art lovers, gamers, and Web3 natives who stay ahead of the curve.
+          Bear or bull — we keep winning by exploring every corner of the ecosystem.
+          From NFT plays to token calls, we're always in the arena.
+        </p>
+        <div class="about-tags sr d3">
+          <span class="tag">NFT Alpha</span>
+          <span class="tag">Token Calls</span>
+          <span class="tag">Web3 Gaming</span>
+          <span class="tag">Art Curation</span>
+          <span class="tag">On-Chain Intel</span>
+          <span class="tag">Degen Culture</span>
+        </div>
+        <div class="about-stats-grid sr d4">
+          <div class="astat">
+            <div class="astat-val">4.1K+</div>
+            <div class="astat-lab">Community</div>
+          </div>
+          <div class="astat">
+            <div class="astat-val">100X</div>
+            <div class="astat-lab">Best call</div>
+          </div>
+          <div class="astat">
+            <div class="astat-val">62X</div>
+            <div class="astat-lab">$CRASH call</div>
+          </div>
+          <div class="astat">
+            <div class="astat-val">180X</div>
+            <div class="astat-lab">Token play</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual sr d2">
+        <div class="orbital">
+          <div class="orb-ring orb-ring-1"></div>
+          <div class="orb-ring orb-ring-2"></div>
+          <div class="orb-ring orb-ring-3"></div>
+          <div class="orb-center">
+            <img src="logo.jpg" alt="ArenaX"/>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ TWEETS ═══ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 40px;">
-  <div class="section-line reveal"></div>
-</div>
-<section id="tweets">
-  <div class="tweets-header reveal">
-    <div>
-      <p class="section-label">// 002 — Latest Posts</p>
-      <h2 class="section-title">From <em>the arena</em></h2>
-    </div>
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="btn btn-outline">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      View All Posts
-    </a>
-  </div>
+<!-- ═══ X FEED ═══ -->
+<section id="feed" class="section-wrap">
+  <div class="section-sep"></div>
+  <div class="inner" style="padding-top:110px;padding-bottom:110px">
 
-  <div class="tweets-grid reveal reveal-delay-1">
-
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="tweet-card" style="text-decoration:none;color:inherit;">
-      <div class="tweet-header">
-        <div class="tweet-avatar">AX</div>
-        <div class="tweet-meta">
-          <div class="tweet-name">ArenaX</div>
-          <div class="tweet-handle">@ArenaXAlpha</div>
-        </div>
-        <svg class="tweet-x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    <div class="feed-header">
+      <div>
+        <p class="eyebrow sr">Live Feed</p>
+        <div class="gold-rule sr d1"></div>
+        <h2 class="section-heading sr d2">From <em>the Arena</em></h2>
+        <p class="section-sub sr d3">Real calls. Real alpha. Straight from the source.</p>
       </div>
-      <p class="tweet-text">Bear or bull, the Arena fam keeps winning. NFT season's been slow with only a few hot plays like <a>Tokyogames</a>, but at ArenaX, we stay ahead by exploring every corner of Web3.</p>
-      <div class="tweet-footer">
-        <span class="tweet-date">27 May 2025</span>
-        <div class="tweet-stats">
-          <span class="tweet-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            84
-          </span>
-          <span class="tweet-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-            31
-          </span>
-        </div>
-      </div>
-    </a>
-
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="tweet-card" style="text-decoration:none;color:inherit;">
-      <div class="tweet-header">
-        <div class="tweet-avatar">AX</div>
-        <div class="tweet-meta">
-          <div class="tweet-name">ArenaX</div>
-          <div class="tweet-handle">@ArenaXAlpha</div>
-        </div>
-        <svg class="tweet-x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </div>
-      <p class="tweet-text">$CRASH called at 2.2K — <a>62.1X</a>. The degenerates in Arena have been eating. In just the past month, here are some token calls the fam has been living off.</p>
-      <div class="tweet-footer">
-        <span class="tweet-date">25 May 2025</span>
-        <div class="tweet-stats">
-          <span class="tweet-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            127
-          </span>
-          <span class="tweet-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-            58
-          </span>
-        </div>
-      </div>
-    </a>
-
-    <a href="https://x.com/ArenaXAlpha" target="_blank" class="tweet-card" style="text-decoration:none;color:inherit;">
-      <div class="tweet-header">
-        <div class="tweet-avatar">AX</div>
-        <div class="tweet-meta">
-          <div class="tweet-name">ArenaX</div>
-          <div class="tweet-handle">@ArenaXAlpha</div>
-        </div>
-        <svg class="tweet-x-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </div>
-      <p class="tweet-text">Another called at 35.9K hit <a>180X</a>. This is why we built the Arena — a place where the community shares alpha before it pops. Join now, the next cycle is loading.</p>
-      <div class="tweet-footer">
-        <span class="tweet-date">20 May 2025</span>
-        <div class="tweet-stats">
-          <span class="tweet-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            203
-          </span>
-          <span class="tweet-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-            91
-          </span>
-        </div>
-      </div>
-    </a>
-
-  </div>
-</section>
-
-<!-- ═══ COLLABS ═══ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 40px;">
-  <div class="section-line reveal"></div>
-</div>
-<section id="collabs">
-  <div class="reveal" style="margin-bottom:40px;">
-    <p class="section-label">// 003 — Collaborations</p>
-    <h2 class="section-title">Who we <em>build with</em></h2>
-  </div>
-
-  <div class="collabs-grid reveal reveal-delay-1">
-    <a href="https://x.com/Goblynz" target="_blank" class="collab-card">
-      <div class="collab-logo">G</div>
-      <span class="collab-name">Goblynz</span>
-      <span class="collab-tag">NFT</span>
-    </a>
-    <a href="https://x.com/OnchainHeroes" target="_blank" class="collab-card">
-      <div class="collab-logo">OH</div>
-      <span class="collab-name">Onchain Heroes</span>
-      <span class="collab-tag">Gaming</span>
-    </a>
-    <a href="https://x.com/EstateX_" target="_blank" class="collab-card">
-      <div class="collab-logo">EX</div>
-      <span class="collab-name">EstateX</span>
-      <span class="collab-tag">RWA</span>
-    </a>
-    <a href="https://x.com/TokyoGameNFT" target="_blank" class="collab-card">
-      <div class="collab-logo">TG</div>
-      <span class="collab-name">Tokyo Game</span>
-      <span class="collab-tag">Gaming</span>
-    </a>
-    <a href="https://x.com/NuclearSamurai_" target="_blank" class="collab-card">
-      <div class="collab-logo">NS</div>
-      <span class="collab-name">Nuclear Samurai</span>
-      <span class="collab-tag">Web3</span>
-    </a>
-  </div>
-</section>
-
-<!-- ═══ COMMUNITY CTA ═══ -->
-<div style="max-width:1200px;margin:0 auto;padding:0 40px;">
-  <div class="section-line reveal"></div>
-</div>
-<section id="community">
-  <div class="community-inner reveal">
-    <div class="community-glow"></div>
-    <p class="section-label" style="margin-bottom:20px;">// 004 — Join</p>
-    <h2 class="community-title">Enter the Arena</h2>
-    <p class="community-sub">The alpha doesn't wait. Neither should you.</p>
-    <div class="community-btns">
-      <a href="https://discord.gg/ntHQRjHz" target="_blank" class="btn btn-gold" style="padding:14px 32px;font-size:12px;">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-        Discord
+      <a href="https://x.com/ArenaXAlpha" target="_blank" rel="noopener"
+         class="btn btn-ghost sr d3" style="height:fit-content;align-self:flex-end">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.262 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        View all posts
       </a>
-      <a href="https://t.me/+5beXHqVcPNBmNTA0" target="_blank" class="btn btn-ghost" style="padding:14px 32px;font-size:12px;">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-        Telegram
+    </div>
+
+    <div class="tweets-grid">
+      <!-- Tweet 1 -->
+      <div class="tweet-card sr">
+        <div class="tc-head">
+          <div class="tc-av">AX</div>
+          <div class="tc-names">
+            <div class="tc-name">ArenaX</div>
+            <div class="tc-handle">@ArenaXAlpha</div>
+          </div>
+          <div class="tc-xlogo">𝕏</div>
+        </div>
+        <div class="tc-body">
+          Bear or bull, the Arena fam keeps winning. NFT season's been slow with only a few hot plays like
+          <span class="mn">@Tokyogames</span>, but at ArenaX, we stay ahead by exploring every corner of Web3.
+          <span class="em">🏟️</span> <span class="ht">#Web3</span> <span class="ht">#NFT</span>
+        </div>
+        <div class="tc-foot">
+          <div class="tc-metrics">
+            <span class="tc-m">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              84
+            </span>
+            <span class="tc-m">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              31
+            </span>
+          </div>
+          <span class="tc-date">27 May 2025</span>
+        </div>
+      </div>
+
+      <!-- Tweet 2 -->
+      <div class="tweet-card sr d1">
+        <div class="tc-head">
+          <div class="tc-av">AX</div>
+          <div class="tc-names">
+            <div class="tc-name">ArenaX</div>
+            <div class="tc-handle">@ArenaXAlpha</div>
+          </div>
+          <div class="tc-xlogo">𝕏</div>
+        </div>
+        <div class="tc-body">
+          <span class="ht">$CRASH</span> called at 2.2K — <strong style="color:var(--gold)">62.1X</strong>. The degenerates in Arena have been eating.
+          In just the past month, here are some token calls the fam has been living off. <span class="em">💰</span>
+          <span class="ht">#Alpha</span> <span class="ht">#DeFi</span>
+        </div>
+        <div class="tc-foot">
+          <div class="tc-metrics">
+            <span class="tc-m">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              127
+            </span>
+            <span class="tc-m">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              58
+            </span>
+          </div>
+          <span class="tc-date">25 May 2025</span>
+        </div>
+      </div>
+
+      <!-- Tweet 3 -->
+      <div class="tweet-card sr d2">
+        <div class="tc-head">
+          <div class="tc-av">AX</div>
+          <div class="tc-names">
+            <div class="tc-name">ArenaX</div>
+            <div class="tc-handle">@ArenaXAlpha</div>
+          </div>
+          <div class="tc-xlogo">𝕏</div>
+        </div>
+        <div class="tc-body">
+          Another called at 35.9K hit <strong style="color:var(--gold)">180X</strong>.
+          This is why we built the Arena — a place where the community shares alpha before it pops.
+          Join now, the next cycle is loading. <span class="em">⚡</span>
+          <span class="ht">#Web3Alpha</span>
+        </div>
+        <div class="tc-foot">
+          <div class="tc-metrics">
+            <span class="tc-m">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              203
+            </span>
+            <span class="tc-m">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              91
+            </span>
+          </div>
+          <span class="tc-date">20 May 2025</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="feed-cta-row sr">
+      <p>// Live feed from @ArenaXAlpha — updates in real time</p>
+      <a href="https://x.com/ArenaXAlpha" target="_blank" rel="noopener">→ Open full timeline on X</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ COLLABORATIONS ═══ -->
+<section id="collabs" class="section-wrap">
+  <div class="section-sep"></div>
+  <div class="inner" style="padding-top:110px;padding-bottom:110px">
+
+    <div class="collabs-header">
+      <p class="eyebrow sr">Network</p>
+      <div class="gold-rule sr d1"></div>
+      <h2 class="section-heading sr d2">Who we <em>build with</em></h2>
+      <p class="section-sub sr d3">The ArenaX ecosystem grows through powerful community alliances. These are the projects shaping the space alongside us.</p>
+    </div>
+
+    <div class="collabs-grid" id="collabs-grid">
+      <!-- filled by JS -->
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ JOIN ═══ -->
+<section id="join" class="section-wrap">
+  <div class="section-sep"></div>
+  <div class="join-bg"></div>
+  <div class="join-grid-bg"></div>
+  <div class="join-inner inner" style="padding-top:110px;padding-bottom:110px">
+    <p class="eyebrow sr" style="justify-content:center;display:flex">Enter the Arena</p>
+    <div class="gold-rule sr d1" style="margin:20px auto 28px"></div>
+    <h2 class="section-heading sr d2" style="text-align:center">The alpha doesn't <em>wait</em></h2>
+    <p class="section-sub sr d3" style="text-align:center;margin:14px auto 0">Neither should you. Connect where you're most active — the signal flows through every channel.</p>
+
+    <div class="join-cards">
+      <a href="https://discord.gg/ntHQRjHz" target="_blank" rel="noopener" class="join-card jd sr d2">
+        <div class="jcard-icon">
+          <svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.077.077 0 0 0 .031.052 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        </div>
+        <div class="jcard-name">Discord</div>
+        <div class="jcard-desc">Main hub for community, alpha drops, calls & voice chats.</div>
+        <div class="jcard-cta">Join Server →</div>
       </a>
-      <a href="https://x.com/ArenaXAlpha" target="_blank" class="btn btn-outline" style="padding:14px 32px;font-size:12px;">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        Follow on X
+      <a href="https://t.me/+5beXHqVcPNBmNTA0" target="_blank" rel="noopener" class="join-card jt sr d3">
+        <div class="jcard-icon">
+          <svg viewBox="0 0 24 24" fill="#29A8E0"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </div>
+        <div class="jcard-name">Telegram</div>
+        <div class="jcard-desc">Instant alpha, announcements & fast community updates.</div>
+        <div class="jcard-cta">Join Group →</div>
+      </a>
+      <a href="https://x.com/ArenaXAlpha" target="_blank" rel="noopener" class="join-card jx sr d4">
+        <div class="jcard-icon">
+          <svg viewBox="0 0 24 24" fill="#C9A84C"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.262 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </div>
+        <div class="jcard-name">X / Twitter</div>
+        <div class="jcard-desc">Follow the signal feed, threads & ecosystem intelligence.</div>
+        <div class="jcard-cta">Follow Now →</div>
       </a>
     </div>
   </div>
@@ -1127,91 +1217,220 @@ footer {
 
 <!-- ═══ FOOTER ═══ -->
 <footer>
-  <div class="footer-logo">ARENA<span>X</span></div>
-  <p class="footer-copy">© 2024 ArenaX — All rights reserved</p>
-  <div class="footer-links">
-    <a href="https://x.com/ArenaXAlpha" target="_blank">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      X
-    </a>
-    <a href="https://discord.gg/ntHQRjHz" target="_blank">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-      Discord
-    </a>
-    <a href="https://t.me/+5beXHqVcPNBmNTA0" target="_blank">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      Telegram
-    </a>
+  <div class="footer-top">
+    <div class="ft-brand">
+      <div class="ft-logo">ARENA<span>X</span></div>
+      <p>Web3 alpha community for art lovers, gamers, and degenerates. Bear or bull — always in the arena.</p>
+      <div class="ft-socials">
+        <a href="https://x.com/ArenaXAlpha" target="_blank" rel="noopener" class="ft-soc" title="X / Twitter">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.262 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://discord.gg/ntHQRjHz" target="_blank" rel="noopener" class="ft-soc" title="Discord">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.077.077 0 0 0 .031.052 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        </a>
+        <a href="https://t.me/+5beXHqVcPNBmNTA0" target="_blank" rel="noopener" class="ft-soc" title="Telegram">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+      </div>
+    </div>
+
+
+    <div class="ft-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#about">About ArenaX</a></li>
+        <li><a href="#feed">X Feed</a></li>
+        <li><a href="#collabs">Collaborations</a></li>
+        <li><a href="#join">Join Community</a></li>
+      </ul>
+    </div>
+
+    <div class="ft-col">
+      <h4>Ecosystem</h4>
+      <ul>
+        <li><a href="https://x.com/GoblynzNFT" target="_blank" rel="noopener">Goblynz NFT ↗</a></li>
+        <li><a href="https://x.com/GeezOnApe" target="_blank" rel="noopener">GeezonApe ↗</a></li>
+        <li><a href="https://x.com/0xRilato" target="_blank" rel="noopener">Rilato ↗</a></li>
+        <li><a href="https://x.com/PacificPodNFT" target="_blank" rel="noopener">Pacific Pod ↗</a></li>
+        <li><a href="https://x.com/nuclearsamurai" target="_blank" rel="noopener">NuclearSamurai ↗</a></li>
+        <li><a href="https://x.com/giraffies_nft" target="_blank" rel="noopener">Giraffes ↗</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2024 ArenaX — All rights reserved. Built for the Web3 community.</p>
+    <span class="ftag">Web3 · Art · Gaming</span>
   </div>
 </footer>
 
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
 <script>
-/* ── PARTICLES ── */
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let W, H, particles = [];
-
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-
-function initParticles() {
-  particles = [];
-  const count = Math.floor((W * H) / 18000);
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.2 + 0.3,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      o: Math.random() * 0.5 + 0.1
-    });
-  }
-}
-
-function drawParticles() {
-  ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(200,175,100,${p.o})`;
-    ctx.fill();
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0) p.x = W;
-    if (p.x > W) p.x = 0;
-    if (p.y < 0) p.y = H;
-    if (p.y > H) p.y = 0;
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-ring');
+if(cur && curR){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    cur.style.left=mx+'px';cur.style.top=my+'px';
   });
-  requestAnimationFrame(drawParticles);
+  (function animC(){
+    rx+=(mx-rx)*.13;ry+=(my-ry)*.13;
+    curR.style.left=rx+'px';curR.style.top=ry+'px';
+    requestAnimationFrame(animC);
+  })();
 }
-
-resize();
-initParticles();
-drawParticles();
-window.addEventListener('resize', () => { resize(); initParticles(); });
 
 /* ── NAV SCROLL ── */
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
-});
+const nav=document.getElementById('nav');
+const btt=document.getElementById('btt');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',scrollY>60);
+  btt.classList.toggle('show',scrollY>400);
+},{passive:true});
 
-/* ── MOBILE NAV ── */
-function toggleMobileNav() {
-  const mn = document.getElementById('mobile-nav');
-  mn.style.display = mn.style.display === 'flex' ? 'none' : 'flex';
+/* ── HAMBURGER ── */
+const hbg=document.getElementById('hamburger');
+const drawer=document.getElementById('drawer');
+hbg.addEventListener('click',()=>{
+  drawer.classList.toggle('open');
+  const spans=hbg.querySelectorAll('span');
+  const open=drawer.classList.contains('open');
+  spans[0].style.transform=open?'rotate(45deg) translate(4px,4px)':'';
+  spans[1].style.opacity=open?'0':'1';
+  spans[2].style.transform=open?'rotate(-45deg) translate(4px,-4px)':'';
+});
+function closeDrawer(){
+  drawer.classList.remove('open');
+  hbg.querySelectorAll('span').forEach(s=>{s.style.transform='';s.style.opacity='1'});
 }
 
 /* ── SCROLL REVEAL ── */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
+const srEls=document.querySelectorAll('.sr');
+const srObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');srObs.unobserve(e.target)}});
+},{threshold:0.1});
+srEls.forEach(el=>srObs.observe(el));
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+/* ── PARTICLE CANVAS ── */
+(function(){
+  const c=document.getElementById('particle-canvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let W,H,particles=[];
+
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+  resize();
+  addEventListener('resize',resize,{passive:true});
+
+  class P{
+    constructor(){this.reset(true)}
+    reset(init){
+      this.x=Math.random()*W;
+      this.y=init?Math.random()*H:Math.random()*H;
+      this.r=Math.random()*1.4+.2;
+      this.vx=(Math.random()-.5)*.35;
+      this.vy=(Math.random()-.5)*.35;
+      this.a=Math.random()*.5+.08;
+      this.gold=Math.random()>.72;
+    }
+    step(){
+      this.x+=this.vx;this.y+=this.vy;
+      if(this.x<-5||this.x>W+5||this.y<-5||this.y>H+5)this.reset(false);
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle=this.gold?'#C9A84C':'#4a4a4a';
+      ctx.globalAlpha=this.a;
+      ctx.fill();
+    }
+  }
+
+  for(let i=0;i<110;i++)particles.push(new P());
+
+  function lines(){
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const d=dx*dx+dy*dy;
+        if(d<8100){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle='#C9A84C';
+          ctx.globalAlpha=(1-d/8100)*.06;
+          ctx.lineWidth=.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  let raf;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{p.step();p.draw()});
+    lines();
+    ctx.globalAlpha=1;
+    raf=requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── COLLABORATIONS ── */
+const COLLABS=[
+  {name:'Goblynz NFT',   handle:'@GoblynzNFT',  url:'https://x.com/GoblynzNFT',    tag:'NFT',          initials:'GN'},
+  {name:'GeezonApe',     handle:'@GeezOnApe',   url:'https://x.com/GeezOnApe',     tag:'Art / NFT',    initials:'GA'},
+  {name:'Rilato',        handle:'@0xRilato',    url:'https://x.com/0xRilato',      tag:'Web3 Builder', initials:'RL'},
+  {name:'Pacific Pod',   handle:'@PacificPodNFT',url:'https://x.com/PacificPodNFT',tag:'Community',    initials:'PP'},
+  {name:'NuclearSamurai',handle:'@nuclearsamurai',url:'https://x.com/nuclearsamurai',tag:'Gaming',      initials:'NS'},
+  {name:'Giraffes',      handle:'@giraffies_nft',url:'https://x.com/giraffies_nft', tag:'NFT Art',      initials:'GF'},
+];
+
+function buildCollabs(){
+  const grid=document.getElementById('collabs-grid');
+  if(!grid)return;
+  COLLABS.forEach((c,i)=>{
+    const delay=['','d1','d2','d3','d4','d5'][i]||'';
+    const card=document.createElement('a');
+    card.href=c.url;card.target='_blank';card.rel='noopener';
+    card.className=`collab-card sr ${delay}`;
+    card.innerHTML=`
+      <div class="cc-icon" id="ccicon-${i}">
+        <span id="cctext-${i}">${c.initials}</span>
+      </div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-tag">${c.tag}</div>
+      <div class="cc-xlink">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.262 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        ${c.handle}
+      </div>`;
+    grid.appendChild(card);
+
+    // Try to load avatar from unavatar.io (free, no API key)
+    const img=new Image();
+    const username=c.handle.replace('@','');
+    img.onload=()=>{
+      const icon=document.getElementById(`ccicon-${i}`);
+      const txt=document.getElementById(`cctext-${i}`);
+      if(icon&&txt){txt.remove();icon.appendChild(img)}
+    };
+    img.onerror=()=>{}; // silently keep initials
+    img.src=`https://unavatar.io/twitter/${username}`;
+    img.alt=c.name;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';
+  });
+
+  // Re-observe new .sr elements
+  document.querySelectorAll('.collab-card.sr:not(.in)').forEach(el=>srObs.observe(el));
+}
+buildCollabs();
 </script>
-
 </body>
 </html>
-	
+
